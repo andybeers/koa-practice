@@ -2,6 +2,10 @@ const Koa = require('koa');
 const app = new Koa();
 const morgan = require('koa-morgan');
 
+// app.use(morgan('dev'));
+
+// x-response-time
+
 app.use(async function (ctx, next) {
   const start = new Date();
   await next();
@@ -9,10 +13,20 @@ app.use(async function (ctx, next) {
   ctx.set('X-Response-Time', `${ms}ms`);
 });
 
-app.use(morgan('dev'));
+// logger
+
+app.use(async function (ctx, next) {
+  const start = new Date();
+  await next();
+  const ms = new Date() - start;
+  console.log(`${ctx.method} ${ctx.url} - ${ms}`);
+});
+
+// response
 
 app.use(ctx => {
-  ctx.body = 'Hello World!';
+  ctx.body = 'Hello World';
 });
 
 app.listen(3000);
+
